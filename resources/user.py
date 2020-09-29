@@ -20,6 +20,8 @@ class UserRegister(Resource):
                         help="This field cannot be left blank!")
     parser.add_argument('lastname', type=str, required=True,
                         help="This field cannot be left blank!")
+    parser.add_argument('user_image_url', type=str, required=True,
+                        help="This field cannot be left blank!")
 
     def post(self):
         data = UserRegister.parser.parse_args()
@@ -43,6 +45,8 @@ class User(Resource):
                         help="This field cannot be left blank!")
     parser.add_argument('lastname', type=str, required=True,
                         help="This field cannot be left blank!")
+    parser.add_argument('user_image', type=str, required=True,
+                        help="This field cannot be left blank!")
 
     def get(self, user_id):
         user = UserModel.find_by_id(user_id)
@@ -61,6 +65,7 @@ class User(Resource):
             user.preferences = data['preferences']
             user.name = data['name']
             user.lastname = data['lastname']
+            user.user_image_url = data['user_image_url']
             
             user.save_to_db()
 
@@ -116,7 +121,6 @@ class UserChangePassword(Resource):
             },200
         
         return {'message':'invalid credentials'},401
-
 
 
 class TokenRefresh(Resource):
