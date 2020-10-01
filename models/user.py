@@ -8,16 +8,14 @@ class UserModel(db.Model):
 
     # db columns
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80))
+    email = db.Column(db.String(80))
     password = db.Column(db.String(80))
     preferences = db.Column(db.String(80))
-    email = db.Column(db.String(80))
     name = db.Column(db.String(80))
     lastname = db.Column(db.String(80))
     user_image_url = db.Column(db.String(120))
 
-    def __init__(self, username, password, preferences, email, name, lastname,user_image_url):
-        self.username = username
+    def __init__(self, password, preferences, email, name, lastname,user_image_url):
         self.password = password
         self.email = email
         self.preferences = preferences
@@ -31,7 +29,6 @@ class UserModel(db.Model):
 
     def json(self):
         return {"id": self.id,
-                "username": self.username,
                 #"password":self.password,
                 "preferences": self.preferences,
                 "email": self.email,
@@ -41,8 +38,8 @@ class UserModel(db.Model):
                 }
 
     @classmethod
-    def find_by_username(cls, username):
-        return cls.query.filter_by(username=username).first()
+    def find_by_email(cls, email):
+        return cls.query.filter_by(email=email).first()
 
     @classmethod
     def find_by_id(cls, _id):

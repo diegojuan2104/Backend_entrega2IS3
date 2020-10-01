@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 
 from resources.user import UserRegister,User,UserLogin,UserChangePassword
 
@@ -9,7 +10,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db' # To locate the db d
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False #Modification tracker
 api = Api(app) #Allow add Resources from flask Rest-full
 app.secret_key = 'abcd'
-
+CORS(app)
 @app.before_first_request #To Create all the tables before run 
 def create_tables():
     db.create_all()
@@ -27,4 +28,4 @@ api.add_resource(UserChangePassword,'/user/changePassword')
 if __name__ == '__main__':
     from db import db 
     db.init_app(app)
-    app.run(port = 3000, debug=True)
+    app.run(port = 5000, debug=True)

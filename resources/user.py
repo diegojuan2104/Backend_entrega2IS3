@@ -8,8 +8,6 @@ from flask_jwt_extended import (create_access_token, create_refresh_token,
 
 class UserRegister(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument('username', type=str, required=True,
-                        help="This field cannot be left blank!")
     parser.add_argument('password', type=str, required=True,
                         help="This field cannot be left blank!")
     parser.add_argument('preferences', type=str, required=True,
@@ -26,11 +24,11 @@ class UserRegister(Resource):
     def post(self):
         data = UserRegister.parser.parse_args()
 
-        if(UserModel.find_by_username(data['username']) == None):
+        if(UserModel.find_by_email(data['email']) == None):
             user = UserModel(**data)  # To completely pass the dictionarie
             user.save_to_db()
         else:
-            return{"message": "Username already exists!"}, 400
+            raise Exception ("correo ya existe")
 
         return {"message": "User created sucessfully!"}, 201
 
@@ -45,7 +43,7 @@ class User(Resource):
                         help="This field cannot be left blank!")
     parser.add_argument('lastname', type=str, required=True,
                         help="This field cannot be left blank!")
-    parser.add_argument('user_image', type=str, required=True,
+    parser.add_argument('user_image_url', type=str, required=True,
                         help="This field cannot be left blank!")
 
     def get(self, user_id):
@@ -81,20 +79,21 @@ class User(Resource):
 
 class UserLogin(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument('username', type=str, required=True, help="This field cannot be left blank!")
+    parser.add_argument('email', type=str, required=True, help="This field cannot be left blank!")
     parser.add_argument('password', type=str, required=True, help="This field cannot be left blank!")
 
     def post(self): #with .self it's the same
         # get data from parser 
         data = UserLogin.parser.parse_args()
         # find user in db
-        user = UserModel.find_by_username(data['username'])
+        user = UserModel.find_by_email(data['email'])
         # check password
 
         if user and safe_str_cmp(user.password,data['password']):
             access_token = create_access_token(identity=user.id,fresh=True)
             refresh_token = create_refresh_token(user.id)
             return{
+                'user_id':user.id,
                 'access_token':access_token,
                 'refresh_token':refresh_token
             },200
