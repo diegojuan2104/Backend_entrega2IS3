@@ -121,6 +121,12 @@ class UserChangePassword(Resource):
         
         return {'message':'invalid credentials'},401
 
+class UserList(Resource):
+    def get(self):
+        return {'users': [user.json() for user in UserModel.query.all()]}
+
+
+
 
 class TokenRefresh(Resource):
     @jwt_refresh_token_required
